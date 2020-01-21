@@ -4,10 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="./css/style.css">
     <title>Document</title>
 </head>
-<body>
-    <canvas width="800" height="400" style="border: 1px solid black"></canvas>
+<body >
+    <div class="splash" style="height: 100vh; width: '100%'; color: white; text-align: center; z-index: 99;">
+        <div>
+            <img src="./images/bg.png" alt="" width="30%" height="30%">
+            <div class="options" id="one_player" style="margin: 50px auto 20px auto;">ONE PLAYER</div>
+            o
+            <div class="options" id="two_players" style="margin-top: 20px;">PLAYER1 VS PLAYER2</div>
+        </div>
+    </div>
+    <canvas width="800" height="400" style="position: absolute; border: 2px solid silver; margin-left: 50%; left: -400px; top:50px;"></canvas>
     <script src="./js/main.js"></script>
 </body>
 </html>

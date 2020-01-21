@@ -1,0 +1,21 @@
+body, html { 
+    margin: 0; 
+    background-color: black;
+    background-image: url('./../images/fondo.jpg');
+}
+div.splash{
+    background-size: 50%;
+    background-position: 50%;
+    background-color: black;
+    background-repeat: no-repeat;
+
+}
+
+button{
+    display: block;
+}
+
+.options:hover{
+    cursor: pointer;
+    font-size: 1.3rem;
+}

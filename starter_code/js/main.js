@@ -31,6 +31,8 @@ class Fighter {
         this.power = 5
         this.height = 180
         this.width = 100
+        this.intervalDesition
+        this.auto_machine = false
         // this.x = 0kz
         // this.y = 0
         this.direction = player2
@@ -98,7 +100,7 @@ class Fighter {
         this.move.start = 200
             this.move.offset = 50
             this.move.end = 250
-        this.x -= 5
+        this.x -= 10
     }
     down(){
         
@@ -142,7 +144,7 @@ class Fighter {
     }
     hit(power){
         sound_hit.play()
-        this.health -= power
+        this.health -= (this.health > 0 ) ? power : 0
         game.checkHealth()
         if( this.health <= 0 ) return this.ko()
         
@@ -152,9 +154,17 @@ class Fighter {
         this.move.end = 70
     }
 
+    hability(){
+        this.width = this.width +50
+        this.move.y = 300
+        this.move.start = 400
+        this.move.offset = 100
+        this.move.end = 100
+    }
+
     ko() {
+        timeout = frames + 15
         this.isKO = true
-        timeout = frames + 10
         this.x -= 200
         this.width = 180
         this.move.y = 200
@@ -231,9 +241,61 @@ class Game{
         }
     }
 
+
+
     isGameOver(){
-        console.log(frames, timeout)
-        return ((this.player1.isKO || this.player2.isKO) && frames >= timeout)
+        return ((this.player1.isKO || this.player2.isKO))
+    }
+
+    SpaceBetweenBoth(){
+        const space_between = -this.player2.x -this.player1.x 
+        return (space_between > 250)
+    }
+
+    takeDesition() {
+        if( this.isGameOver() ) return
+        if( this.player2.auto_machine ){
+            if( this.SpaceBetweenBoth() ){
+                 this.player2.go()
+            }else{
+                const action = Math.floor(Math.random()*30)
+                switch( action ){
+                    case 0:
+                         return this.player2.idle()
+                     case 1:
+                         return this.player2.punch()
+                     case 2:
+                         return this.player2.kick()
+                     case 3:
+                         return this.player2.back()
+                    default :
+                        return this.player2.idle()
+                }
+                
+            }
+        }
+
+        if( this.player1.auto_machine ){
+            if( this.SpaceBetweenBoth() ){
+                (Math.floor(Math.random() *3) % 5) ? this.player1.go() : this.player1.back()
+            }else{
+                const action = Math.floor(Math.random()*30)
+                switch( action ){
+                    case 0:
+                         return this.player1.idle()
+                     case 1:
+                         return this.player1.punch()
+                     case 2:
+                         return this.player1.kick()
+                     case 3:
+                         return this.player1.back()
+                    default :
+                    return this.player1.idle()
+                }
+                
+            }
+        }
+
     }
 
 }
@@ -260,7 +322,8 @@ function checkingJumping(){
 
 function update(){
     frames++
-    ctx.clearRect(0,0, $canvas.width, $canvas.height)
+    ( game.isGameOver() ) ? game.DrawGameOver() : ctx.clearRect(0,0, $canvas.width, $canvas.height)
+    game.takeDesition()
     game.showStage()
     game.checkHealth()
     checkingJumping()
@@ -269,28 +332,42 @@ function update(){
     game.Draw()
     game.checkKnock()
     game.DrawGameOver()
-    if( game.isGameOver() ) clearInterval(interval)
+    if( game.isGameOver() && frames >= timeout ) clearInterval(interval)
 
 }
 
+function show_menu(){
+    clearInterval(interval)
+    $canvas.style.visibility = "hidden"
+    document.querySelector('.splash').style.visibility = 'visible'
+}
+
+function hide_menu(){
+    $canvas.style.visibility = "visible"
+    document.querySelector('.splash').style.visibility = 'hidden'
+}
+
 function start_game(){
-    game = new Game(
-        new Fighter(characters.ryu, false),
-        new Fighter(characters.guile, true))
-    interval = setInterval(update, 100)
+    // game = new Game(
+    //     new Fighter(characters.ryu, false),
+    //     new Fighter(characters.guile, true))
+
+    // // game.player1.auto_machine = true
+    // // game.player2.auto_machine = true
+    // interval = setInterval(update, 100)
 }
 const a = new Audio()
 
 window.onload = ()=>{
-    // f = new Fighter(characters.ryu, false)
-    // f2= new Fighter(characters.guile, true)
-    start_game()
+    $canvas.style.visibility = 'hidden'
 }
 
 
 window.onkeydown = ({keyCode})=>{
     game.player1.keys[keyCode] = true
     game.player2.keys[keyCode] = true
+
+    if( keyCode === 81 ) return show_menu()
 
     if( game.player1.keys[37] && game.player1.keys[17] )  game.player1.punch()
     if( game.player1.keys[39] && game.player1.keys[17] )  game.player1.punch()
@@ -326,3 +403,26 @@ window.onkeyup = ({keyCode})=>{
     }
     return false
 }
+
+const one_player = document.querySelector('#one_player')
+const two_players = document.querySelector('#two_players')
+
+one_player.onclick = () =>{
+    hide_menu()
+    game = new Game(
+        new Fighter(characters.ryu, false),
+        new Fighter(characters.guile, true))
+
+    game.player2.auto_machine = true
+    interval = setInterval(update, 100)
+}
+
+two_players.onclick = ()=>{
+    hide_menu()
+    hide_menu()
+    game = new Game(
+        new Fighter(characters.ryu, false),
+        new Fighter(characters.guile, true))
+    interval = setInterval(update, 100)
+}
+
