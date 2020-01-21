@@ -6,6 +6,7 @@ let game
 let f
 let f2
 let bg 
+let timeout = 0
 
 const sound = new Audio()
 sound.src = "./../sound/ryu.mp3"
@@ -13,7 +14,8 @@ const sound_hit = new Audio()
 sound_hit.src = "./../sound/hit.wav"
 const sound_shock = new Audio()
 sound_shock.src = "./../sound/shock.wav"
-
+const ko_image = new Image()
+ko_image.src = "./../images/ko.png"
 
 const characters = {
     ryu: "./../images/ryu_moves.png",
@@ -25,7 +27,7 @@ class Fighter {
         this.x = ( player2 ) ? -$canvas.width+150 : 50
         this.y = $canvas.height -200
         this.attack = false
-        this.health = 100
+        this.health = 20
         this.power = 5
         this.height = 180
         this.width = 100
@@ -152,12 +154,14 @@ class Fighter {
 
     ko() {
         this.isKO = true
+        timeout = frames + 10
         this.x -= 200
         this.width = 180
         this.move.y = 200
         this.move.start = 0
         this.move.offset = 90
         this.move.end = 360
+        
     }
 }
 
@@ -191,8 +195,8 @@ class Game{
                 this.player1.hit(this.player2.power)
             }
             // (this.player2.attack) ? this.player1.hit() : null
-            this.player1.x -= 10
-            this.player2.x -= 10
+            this.player1.x -= 20
+            this.player2.x -= 20
             
         }
         if( -this.player2.x-this.player1.width >= $canvas.width -this.player2.width){
@@ -219,6 +223,17 @@ class Game{
         ctx.fillRect(mid_width -320, 20, this.player1.health * 300 / 100, 30)
         ctx.fillRect(mid_width +20, 20, this.player2.health * 300 / 100, 30)
 
+    }
+
+    DrawGameOver(){
+        if(this.isGameOver()){
+            ctx.drawImage(ko_image, $canvas.width /2 -200, 100)
+        }
+    }
+
+    isGameOver(){
+        console.log(frames, timeout)
+        return ((this.player1.isKO || this.player2.isKO) && frames >= timeout)
     }
 
 }
@@ -248,12 +263,14 @@ function update(){
     ctx.clearRect(0,0, $canvas.width, $canvas.height)
     game.showStage()
     game.checkHealth()
+    checkingJumping()
     // f.Draw()
     // f2.Draw()
     game.Draw()
     game.checkKnock()
-    
-    checkingJumping()
+    game.DrawGameOver()
+    if( game.isGameOver() ) clearInterval(interval)
+
 }
 
 function start_game(){
@@ -290,7 +307,7 @@ window.onkeydown = ({keyCode})=>{
     if( game.player2.keys[76] && !game.player2.isJumping )  game.player2.back()
     if( game.player2.keys[65] && !game.player2.isJumping )  game.player2.punch()
     if( game.player2.keys[83] && !game.player2.isJumping )  game.player2.kick()
-
+    return false
 }
 
 window.onkeyup = ({keyCode})=>{
@@ -307,4 +324,5 @@ window.onkeyup = ({keyCode})=>{
         game.player2.idle()
 
     }
+    return false
 }
