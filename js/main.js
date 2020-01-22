@@ -9,17 +9,17 @@ let bg
 let timeout = 0
 
 const sound = new Audio()
-sound.src = "./../sound/ryu.mp3"
+sound.src = "../sound/ryu.mp3"
 const sound_hit = new Audio()
-sound_hit.src = "./../sound/hit.wav"
+sound_hit.src = "../sound/hit.wav"
 const sound_shock = new Audio()
-sound_shock.src = "./../sound/shock.wav"
+sound_shock.src = "../sound/shock.wav"
 const ko_image = new Image()
-ko_image.src = "./../images/ko.png"
+ko_image.src = "../images/ko.png"
 
 const characters = {
-    ryu: "./../images/ryu_moves.png",
-    guile: "./../images/guile_moves.png",
+    ryu: "../images/ryu_moves.png",
+    guile: "../images/guile_moves.png",
 }
 
 class Fighter {
