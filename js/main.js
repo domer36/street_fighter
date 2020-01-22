@@ -14,8 +14,17 @@ const sound_hit = new Audio()
 sound_hit.src = "sound/hit.wav"
 const sound_shock = new Audio()
 sound_shock.src = "sound/shock.wav"
+
+const ko_sound = new Audio()
+ko_sound.src = "sound/ko_sound.mp3"
+const deadth_sound = new Audio()
+deadth_sound.src = "sound/deadth_sound.mp3"
+
 const ko_image = new Image()
 ko_image.src = "images/ko.png"
+
+const you_win = new Image()
+you_win.src = "images/you_win.png"
 
 const characters = {
     ryu: "images/ryu_moves.png",
@@ -27,18 +36,16 @@ class Fighter {
         this.x = ( player2 ) ? -$canvas.width+150 : 50
         this.y = $canvas.height -200
         this.attack = false
-        this.health = 20
+        this.health = 100
         this.power = 5
         this.height = 180
         this.width = 100
         this.intervalDesition
         this.auto_machine = false
-        // this.x = 0kz
-        // this.y = 0
+        
         this.direction = player2
         this.img_source = new Image()
         this.img_source.src = character
-        // this.img_source.src = "./../images/ryu_moves.png"
         this.img_source.onload = ()=>{
             
             
@@ -127,7 +134,7 @@ class Fighter {
     punch(){
         if( this.attack ) return
         sound_shock.play()
-        this.width += 40
+        this.width += 20
         this.attack = true
         this.x += 20
         this.move.y = 100
@@ -167,6 +174,7 @@ class Fighter {
     }
 
     ko() {
+        deadth_sound.play()
         timeout = frames + 15
         this.isKO = true
         this.x -= 200
@@ -240,12 +248,18 @@ class Game{
 
     DrawGameOver(){
         if(this.isGameOver()){
+            deadth_sound.volume = 0.2
+            deadth_sound.play()
+            ko_sound.play()
             sound.pause()
             ctx.fillStyle = "black"
             ctx.fillRect($canvas.width /2 -200, $canvas.height -25, 400, 30)
             ctx.fillStyle = "white"
             ctx.fillText("Press Q key to exit", $canvas.width /2 -80, $canvas.height -7)
             ctx.drawImage(ko_image, $canvas.width /2 -200, 10)
+
+            if(this.player2.isKO) ctx.drawImage(you_win, 20, 80)
+            if(this.player1.isKO) ctx.drawImage(you_win, $canvas.width -300, 80)
         }
     }
 
@@ -455,6 +469,9 @@ demo.onclick = ()=>{
     game = new Game(
         new Fighter(characters.ryu, false),
         new Fighter(characters.guile, true))
+
+    game.player1.health = 30
+    game.player2.health = 30
 
     game.player1.auto_machine = true
     game.player2.auto_machine = true
