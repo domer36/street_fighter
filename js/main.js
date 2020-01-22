@@ -125,7 +125,9 @@ class Fighter {
         }
     }
     punch(){
+        if( this.attack ) return
         sound_shock.play()
+        this.width += 40
         this.attack = true
         this.x += 20
         this.move.y = 100
@@ -134,6 +136,7 @@ class Fighter {
         this.move.end = 70
     }
     kick(){
+        if( this.attack ) return
         sound_shock.play()
         this.attack = true
         this.x += 20
@@ -155,6 +158,7 @@ class Fighter {
     }
 
     hability(){
+        console.log("Hability")
         this.width = this.width +50
         this.move.y = 300
         this.move.start = 400
@@ -184,19 +188,18 @@ class Game{
         bg = new Image()
         bg.src = "images/ryu_stage.jpg"
         bg.onload = ()=> this.showStage()
-
+        this.DrawGameOver()
         sound.play()
     }
     Draw(){ 
         this.player1.Draw()
         this.player2.Draw()
-        // sound.play()
     }
     showStage(){
         ctx.drawImage(bg, 0,0, $canvas.width, $canvas.height)
     }
     checkKnock() {
-        // console.log( this.player1.x, -this.player2.x-this.player1.width, $canvas.width, this.player2.x)
+        
         if(this.player1.x + 100 > -this.player2.x-100) {
             if( this.player1.attack ) {
                 this.player2.hit(this.player1.power) 
@@ -238,7 +241,11 @@ class Game{
     DrawGameOver(){
         if(this.isGameOver()){
             sound.pause()
-            ctx.drawImage(ko_image, $canvas.width /2 -200, 100)
+            ctx.fillStyle = "black"
+            ctx.fillRect($canvas.width /2 -200, $canvas.height -25, 400, 30)
+            ctx.fillStyle = "white"
+            ctx.fillText("Press Q key to exit", $canvas.width /2 -80, $canvas.height -7)
+            ctx.drawImage(ko_image, $canvas.width /2 -200, 10)
         }
     }
 
@@ -262,15 +269,20 @@ class Game{
                 const action = Math.floor(Math.random()*30)
                 switch( action ){
                     case 0:
-                         return this.player2.idle()
+                          this.player2.idle()
+                          break
                      case 1:
-                         return this.player2.punch()
+                          this.player2.punch()
+                          break
                      case 2:
-                         return this.player2.kick()
+                          this.player2.kick()
+                          break
                      case 3:
-                         return this.player2.back()
+                          this.player2.back()
+                          break
                     default :
-                        return this.player2.idle()
+                         this.player2.idle()
+                         break
                 }
                 
             }
@@ -278,20 +290,25 @@ class Game{
 
         if( this.player1.auto_machine ){
             if( this.SpaceBetweenBoth() ){
-                (Math.floor(Math.random() *3) % 5) ? this.player1.go() : this.player1.back()
+                this.player1.go()
             }else{
-                const action = Math.floor(Math.random()*30)
-                switch( action ){
+                const action2 = Math.floor(Math.random()*30)
+                switch( action2 ){
                     case 0:
-                         return this.player1.idle()
+                          this.player1.idle()
+                          break
                      case 1:
-                         return this.player1.punch()
+                          this.player1.punch()
+                          break
                      case 2:
-                         return this.player1.kick()
+                          this.player1.kick()
+                          break
                      case 3:
-                         return this.player1.back()
+                          this.player1.back()
+                          break
                     default :
-                    return this.player1.idle()
+                     this.player1.idle()
+                     break
                 }
                 
             }
@@ -323,16 +340,14 @@ function checkingJumping(){
 
 function update(){
     frames++
-    ( game.isGameOver() ) ? game.DrawGameOver() : ctx.clearRect(0,0, $canvas.width, $canvas.height)
-    game.takeDesition()
+    ctx.clearRect(0,0, $canvas.width, $canvas.height)
     game.showStage()
+    game.DrawGameOver()
+    game.takeDesition()
     game.checkHealth()
     checkingJumping()
-    // f.Draw()
-    // f2.Draw()
-    game.Draw()
     game.checkKnock()
-    game.DrawGameOver()
+    game.Draw()
     if( game.isGameOver() && frames >= timeout ) clearInterval(interval)
 
 }
@@ -365,26 +380,34 @@ window.onload = ()=>{
 
 
 window.onkeydown = ({keyCode})=>{
+    
+
     game.player1.keys[keyCode] = true
     game.player2.keys[keyCode] = true
 
     if( keyCode === 81 ) return show_menu()
 
-    if( game.player1.keys[37] && game.player1.keys[17] )  game.player1.punch()
-    if( game.player1.keys[39] && game.player1.keys[17] )  game.player1.punch()
-    if( game.player1.keys[38] && game.player1.keys[39] )  game.player1.jumpForward()
-    if( game.player1.keys[39] && !game.player1.isJumping )  game.player1.go()
-    if( game.player1.keys[37] && !game.player1.isJumping )  game.player1.back()
-    if( game.player1.keys[40] && !game.player1.isJumping )  game.player1.down()
-    if( game.player1.keys[38] ) game.player1.jump()
-    if( game.player1.keys[17] ) game.player1.punch()
-    if( game.player1.keys[16] ) game.player1.kick()
+    if( game.player1.keys[17] && game.player1.keys[39]) game.player1.punch()
+    else if(game.player1.keys[17] && game.player1.keys[37]) game.player1.punch()
+    else if(game.player1.keys[16] && game.player1.keys[39]) game.player1.kick()
+    else if(game.player1.keys[16] && game.player1.keys[37]) game.player1.kick()
+    else{
+        if( game.player1.keys[39] && !game.player1.isJumping )  game.player1.go()
+        if( game.player1.keys[37] && !game.player1.isJumping )  game.player1.back()
+        if( game.player1.keys[17] && !game.player1.isJumping )  game.player1.punch()
+        if( game.player1.keys[16] && !game.player1.isJumping )  game.player1.kick()
+    }
 
-
-    if( game.player2.keys[74] && !game.player2.isJumping )  game.player2.go()
-    if( game.player2.keys[76] && !game.player2.isJumping )  game.player2.back()
-    if( game.player2.keys[65] && !game.player2.isJumping )  game.player2.punch()
-    if( game.player2.keys[83] && !game.player2.isJumping )  game.player2.kick()
+    if( game.player2.keys[65] && game.player2.keys[74]) game.player2.punch()
+    else if( game.player2.keys[65] && game.player2.keys[76]) game.player2.punch()
+    else if(game.player2.keys[83] && game.player2.keys[74]) game.player2.kick()
+    else if(game.player2.keys[83] && game.player2.keys[76]) game.player2.kick()
+    else{
+        if( game.player2.keys[74] && !game.player2.isJumping )  game.player2.go()
+        if( game.player2.keys[76] && !game.player2.isJumping )  game.player2.back()
+        if( game.player2.keys[65] && !game.player2.isJumping )  game.player2.punch()
+        if( game.player2.keys[83] && !game.player2.isJumping )  game.player2.kick()
+    }
     return false
 }
 
@@ -407,6 +430,7 @@ window.onkeyup = ({keyCode})=>{
 
 const one_player = document.querySelector('#one_player')
 const two_players = document.querySelector('#two_players')
+const demo = document.querySelector('#demo')
 
 one_player.onclick = () =>{
     hide_menu()
@@ -420,10 +444,19 @@ one_player.onclick = () =>{
 
 two_players.onclick = ()=>{
     hide_menu()
-    hide_menu()
     game = new Game(
         new Fighter(characters.ryu, false),
         new Fighter(characters.guile, true))
     interval = setInterval(update, 100)
 }
 
+demo.onclick = ()=>{
+    hide_menu()
+    game = new Game(
+        new Fighter(characters.ryu, false),
+        new Fighter(characters.guile, true))
+
+    game.player1.auto_machine = true
+    game.player2.auto_machine = true
+    interval = setInterval(update, 100)
+}

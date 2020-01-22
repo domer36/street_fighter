@@ -14,8 +14,14 @@ div.splash{
 button{
     display: block;
 }
-
+.options{
+    color: yellow;
+    display: inline-block;
+    margin: 0 50px;
+    padding: 5px;
+    text-shadow: 2px 2px 5px orangered;
+}
 .options:hover{
     cursor: pointer;
-    font-size: 1.3rem;
+    font-weight: bold;
 }
