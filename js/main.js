@@ -185,7 +185,7 @@ class Game{
         bg.src = "images/ryu_stage.jpg"
         bg.onload = ()=> this.showStage()
 
-        
+        sound.play()
     }
     Draw(){ 
         this.player1.Draw()
@@ -237,6 +237,7 @@ class Game{
 
     DrawGameOver(){
         if(this.isGameOver()){
+            sound.pause()
             ctx.drawImage(ko_image, $canvas.width /2 -200, 100)
         }
     }
