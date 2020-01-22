@@ -174,7 +174,6 @@ class Fighter {
     }
 
     ko() {
-        deadth_sound.play()
         timeout = frames + 15
         this.isKO = true
         this.x -= 200
@@ -190,6 +189,7 @@ class Fighter {
 
 class Game{
     constructor(pl1, pl2){
+        this.gameover_showed = false
         this.player1 = pl1
         this.player2 = pl2
         this.checkHealth()
@@ -228,6 +228,8 @@ class Game{
     }
     checkHealth(){
         const mid_width = ($canvas.width /2)
+        const player1_health = this.player1.health * 300 / 100
+        const player2_health = this.player2.health * 300 / 100
 
         ctx.fillStyle = "red"
         ctx.font = "bold 20px Arial"
@@ -239,18 +241,30 @@ class Game{
 
         ctx.fillRect(mid_width -320, 20, 300, 30)
         ctx.fillRect(mid_width +20, 20, 300, 30)
+
         ctx.fillStyle = "yellow"
-        
-        ctx.fillRect(mid_width -320, 20, this.player1.health * 300 / 100, 30)
-        ctx.fillRect(mid_width +20, 20, this.player2.health * 300 / 100, 30)
+        ctx.fillRect(mid_width -(player1_health+20), 20, player1_health, 30)
+        ctx.fillRect(mid_width +20, 20, player2_health, 30)
 
     }
 
     DrawGameOver(){
-        if(this.isGameOver()){
-            deadth_sound.volume = 0.2
+        if( this.isGameOver() && !this.gameover_showed ){
+            ko_sound.volume = 0.8
             deadth_sound.play()
             ko_sound.play()
+        }
+        if(this.isGameOver()){
+            this.gameover_showed = true
+            if( this.player1.isKO ){
+                this.player2.idle()
+                this.player1.ko()
+            }
+            if( this.player2.isKO ){
+                this.player1.idle()
+                this.player2.ko()
+            }
+
             sound.pause()
             ctx.fillStyle = "black"
             ctx.fillRect($canvas.width /2 -200, $canvas.height -25, 400, 30)
