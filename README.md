@@ -5,4 +5,9 @@ Para este proyecto decidí recrear una batalla del videojuego **Street Fighter**
 ![Image](https://domer36.github.io/street_fighter/images/presentacion.png)
 
 ## Modo de Juego
-Te permite jugar solo o 
+Tiene dos modos de juego, un jugador donde te enfrentas contra el juego y de dos jugadores donde te enfrentaras con algún amigo.
+
+## Instrucciones
+El juego es simple, los personajes se mueben hacia la izquierda y derecha, golpean con puño y patada.
+
+![Image](https://domer36.github.io/street_fighter/images/instrucciones.png)
