@@ -11,3 +11,6 @@ Tiene dos modos de juego, un jugador donde te enfrentas contra el juego y de dos
 El juego es simple, los personajes se mueben hacia la izquierda y derecha, golpean con puño y patada.
 
 ![Image](https://domer36.github.io/street_fighter/images/instrucciones.png)
+
+## Juego
+Para jugarlo da click [aquí](https://domer36.github.io/street_fighter/).
