@@ -421,6 +421,7 @@ function update(){
 }
 
 function show_menu(){
+    fullscreen_exit()
     clearInterval(interval)
     $canvas.style.visibility = "hidden"
     document.querySelector('.splash').style.visibility = 'visible'
@@ -479,7 +480,31 @@ window.onkeyup = ({keyCode})=>{
 
     return false
 }
+var elem = document.querySelector("canvas");
 
+function fullscreen_start(){
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.mozRequestFullScreen) { /* Firefox */
+        elem.mozRequestFullScreen();
+      } else if (elem.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { /* IE/Edge */
+        elem.msRequestFullscreen();
+      }
+}
+
+function fullscreen_exit(){
+    if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.mozCancelFullScreen) { /* Firefox */
+        document.mozCancelFullScreen();
+      } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { /* IE/Edge */
+        document.msExitFullscreen();
+      }
+}
 
 
 one_player.onclick = () =>{
@@ -490,6 +515,7 @@ one_player.onclick = () =>{
 
     game.player2.auto_machine = true
     interval = setInterval(update, 100)
+    fullscreen_start()
 }
 
 two_players.onclick = ()=>{
@@ -498,6 +524,7 @@ two_players.onclick = ()=>{
         new Fighter(characters.ryu, false),
         new Fighter(characters.guile, true))
     interval = setInterval(update, 100)
+    fullscreen_start()
 }
 
 demo.onclick = ()=>{
@@ -514,4 +541,5 @@ demo.onclick = ()=>{
     game.player1.auto_machine = true
     game.player2.auto_machine = true
     interval = setInterval(update, 100)
+    fullscreen_start()
 }
