@@ -71,6 +71,7 @@ class Fighter {
         this.intervalDesition
         this.auto_machine = false
         this.sendHability = false
+        this.hitting = false
         
         this.direction = player2
         this.img_source = new Image()
@@ -110,6 +111,7 @@ class Fighter {
     idle() {
         this.attack = false
         this.sendHability = false
+        this.hitting = false
         this.width = 100
         this.height = 180
         this.move = {
@@ -123,6 +125,7 @@ class Fighter {
     }
 
     go(){
+        if( this.hitting ) return 
         this.move.start = 200
         this.move.offset = 50
         this.move.end = 250
@@ -176,11 +179,11 @@ class Fighter {
         this.move.end = 70
     }
     hit(power){
+        this.hitting = true
         sound_hit.play()
         this.health -= (this.health > 0 ) ? power : 0
-        game.checkHealth()
+        //game.checkHealth()
         if( this.health <= 0 ) return this.ko()
-        
         this.move.y = 200
         this.move.start = 0
         this.move.offset = 70
@@ -235,8 +238,8 @@ class Game{
     }
     checkKnock() {
         if(this.player1.x + 100 > -this.player2.x-100) {
-            ( this.player1.attack ) ? this.player2.hit(this.player1.power) : null
-            ( this.player2.attack ) ? this.player1.hit(this.player2.power) : null
+            if( this.player1.attack )  this.player2.hit(this.player1.power)
+            if( this.player2.attack )  this.player1.hit(this.player2.power)
 
             this.player1.x -= 20
             this.player2.x -= 20
@@ -248,6 +251,7 @@ class Game{
 
     }
     checkHealth(){
+        
         const mid_width = ($canvas.width /2)
         const player1_health = this.player1.health * 300 / 100
         const player2_health = this.player2.health * 300 / 100
@@ -358,16 +362,23 @@ class Game{
 
     takeDesition() {
         if( this.isGameOver() ) return
-        if( this.player2.auto_machine ){
-            ( this.SpaceBetweenBoth() )
-                ? this.player2.go()
-                : this.ejectDesition(this.player2, Math.floor(Math.random()* this.delayToTakeDesition ) )
-        }
 
+        if( this.player2.auto_machine ){
+            if( this.SpaceBetweenBoth() && !this.player2.hitting ){
+                this.player2.go()
+
+            }else{
+                this.ejectDesition(this.player2, Math.floor(Math.random()* this.delayToTakeDesition ) )
+                this.player2.hitting = false
+            }
+        }
+        
         if( this.player1.auto_machine ){
-            ( this.SpaceBetweenBoth() )
-                ? this.player1.go()
-                : this.ejectDesition( this.player1, Math.floor(Math.random()* this.delayToTakeDesition ) )
+            if( this.SpaceBetweenBoth() ){
+                this.player1.go()
+            }else{
+                this.ejectDesition( this.player1, Math.floor(Math.random()* this.delayToTakeDesition ) )
+            }
         }
     }
 }
